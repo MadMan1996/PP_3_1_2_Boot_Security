@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>New User Form</title>
+</head>
+<body>
+<style>
+    body {
+        font-size: 14px;
+    }
+
+    input[type=text], input[type=password], .checkbox{
+        width: 100%;
+        padding: 8px 10px;
+        margin: 8px 0;
+        box-sizing: border-box;
+        background-color: aliceblue;
+        font-size: 14px;
+    }
+    .checkbox {
+        border: solid 2px black;
+    }
+
+    input[type=submit] {
+        background-color: white;
+        color: black;
+        border: 2px solid black; /* Green */
+        transition-duration: 0.4s;
+        border-radius: 10px;
+        margin-top: 20px;
+        margin-bottom: 10px;
+        padding: 8px 10px;
+    }
+
+    input[type=submit]:hover {
+        background-color: aliceblue;
+    }
+
+    .error {
+        color: red;
+    }
+
+</style>
+<form th:action="@{/admin/users}" th:method="POST" th:object="${user}">
+
+    <label for="firstName">First Name:</label>
+    <input type="text" th:field="*{firstName}" id="firstName"/>
+    <p class="error" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">Name Error</p>
+
+    <label for="lastName">Last Name:</label>
+    <input type="text" th:field="*{lastName}" id="lastName"/>
+    <p class="error" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">Name Error</p>
+
+    <label for="age">Age:</label>
+    <input type="text" th:field="*{age}" id="age"/>
+    <p class="error" th:if="${#fields.hasErrors('age')}" th:errors="*{age}">Age</p>
+
+    <label for="city">City: </label>
+    <input type="text" th:field="*{city}" id="city"/>
+
+    <label for="email">Email: </label>
+    <input  type="text" th:field="*{email}" id="email"/>
+    <p class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Eamil Error</p>
+
+    <label for="avatar">Avatar link: </label>
+    <input type="text" th:field="*{avatar}" id="avatar"/>
+
+    <label for="password">Password: </label>
+    <input type="password" th:field="*{password}" id="password"/>
+    <p class="error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Passwrord</p>
+
+    <p class="checkbox">
+        <label>Roles:
+            <input type="checkbox" name="roles"
+                   th:each="role : ${roles}"
+                   th:text="${role.getAuthority()}"
+                   th:value="${role.getId()}"
+                   th:field="*{userRoles}"
+            />
+        </label>
+
+    </p>
+
+    <p class="error" th:if="${#fields.hasErrors('userRoles')}" th:errors="*{userRoles}">UserRoles</p>
+
+    <input type="submit" value="Create profile"/>
+
+
+</form>
+
+</body>
+</html>

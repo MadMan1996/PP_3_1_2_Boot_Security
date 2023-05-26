@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<style>
+
+
+    table {
+        width: 60%;
+        min-width: 300px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+
+    img {
+        object-fit: cover;
+        border-radius: 40px;
+        width: 150px;
+        height: 150px;
+    }
+
+    tr {
+        text-align: center;
+        vertical-align: top;
+    }
+
+    td {
+        padding: 5px;
+        padding-top: 27px;
+        font-size: 18px;
+    }
+
+    input[type=submit] {
+        background-color: white;
+        color: black;
+        border: 2px solid black; /* Green */
+        transition-duration: 0.4s;
+        border-radius: 10px;
+        padding: 2px 10px;
+    }
+
+    .remove:hover {
+        background-color: crimson;
+    }
+    .check:hover {
+        background-color: lightblue;
+    }
+    .create:hover {
+        background-color: lightgreen;
+    }
+
+</style>
+    <h1 style="text-align: center">List of users</h1>
+<table>
+    <tr th:each="user : ${users}">
+        <td style="padding: 5px"><img th:src="${user.getAvatar()}"/></td>
+        <td th:text="${user.getLastName()}"></td>
+        <td th:text="${user.getFirstName()}"></td>
+        <td th:text="${user.getAge()} + 'years'"></td>
+        <td th:text="${user.getCity()}"></td>
+        <td th:text="${user.getEmail()}"></td>
+<!--        <td>-->
+<!--            <form method="get" th:action="@{/admin/users/{id}/edit(id=${user.getId()})}" th:object="${user}">-->
+<!--                <input id="edit" type="submit" value="Edit"/>-->
+<!--            </form>-->
+<!--        </td>-->
+        <td id="last">
+            <form method="POST" th:action="@{/admin/users/delete/{id}(id=${user.getId()})}">
+                <input class="remove" type="submit" value="Remove"/>
+            </form>
+        </td>
+
+    </tr>
+    <tr>
+        <td>
+            <form method="Get" th:action="@{/admin/users/new}">
+                <input class="create" type="submit" value="Create New User"/>
+            </form>
+        </td>
+        <td>
+            <form method="Get" th:action="@{/user}">
+                <input class="check"  type="submit" value="Check My Profile"/>
+            </form>
+        </td>
+        <td>
+            <form th:action="@{/logout}" method="post">
+                <input class="remove" type="submit"  value="Sing Out"/>
+            </form>
+        </td>
+    </tr>
+</table>
+
+
+</body>
+</html>
