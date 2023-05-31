@@ -8,7 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import javax.validation.Valid;
 
 @Controller
@@ -19,7 +19,7 @@ public class UsersController {
         this.userService = userService;
     }
 
-    @PostMapping("user/{id}")
+    @PatchMapping("users/{id}")
     public String updateUserProfile(@Valid User user, BindingResult bindingResult){
         if(userService.isUserExistsWithEmail(user.getEmail()) && !userService.getById(user.getId()).getEmail().equals(user.getEmail())){
             bindingResult.rejectValue("email", "error.user", "An account already exists for this email.");

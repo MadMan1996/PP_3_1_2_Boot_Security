@@ -69,7 +69,7 @@
 <!--            </form>-->
 <!--        </td>-->
         <td id="last">
-            <form method="POST" th:action="@{/admin/users/delete/{id}(id=${user.getId()})}">
+            <form th:method="DELETE" th:action="@{/admin/users/{id}(id=${user.getId()})}">
                 <input class="remove" type="submit" value="Remove"/>
             </form>
         </td>

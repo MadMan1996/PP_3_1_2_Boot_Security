@@ -7,6 +7,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.kata.spring.boot_security.demo.DAO.RolesRepository;
 import ru.kata.spring.boot_security.demo.models.User;
@@ -32,7 +33,7 @@ public class AdminsController {
         return "user/listOfUsers";
     }
 
-    @PostMapping("/users/delete/{id}")
+    @DeleteMapping("/users/{id}")
     public String deleteUserProfile(@PathVariable(name = "id") Long id) {
         userService.removeUserById(id);
         return "redirect:/admin/users";
