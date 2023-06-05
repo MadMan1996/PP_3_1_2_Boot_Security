@@ -65,10 +65,7 @@
         <span th:text="${user.getEmail()}"></span>
     </p>
     <p>
-        <a th:href="@{/user/edit}">
-            <button>Edit Profile</button>
-        </a>
-        <a th:href="@{/admin/users}">
+        <a th:href="@{/admin/}">
             <button sec:authorize="hasRole('ADMIN')" >Admin Page</button>
         </a>
     </p>

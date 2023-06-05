@@ -39,7 +39,7 @@
 </style>
 <body>
 
-<form th:action="@{/users/{id}(id = ${user.getId()})}" th:method="PATCH" th:object="${user}">
+<form th:action="@{/admin/{id}(id = ${user.getId()})}" th:method="PATCH" th:object="${user}">
 
     <label for="firstName">First Name:</label>
     <input type="text" th:field="*{firstName}" id="firstName"/>

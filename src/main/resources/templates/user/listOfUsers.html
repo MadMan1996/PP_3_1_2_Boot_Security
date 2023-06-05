@@ -68,8 +68,14 @@
 <!--                <input id="edit" type="submit" value="Edit"/>-->
 <!--            </form>-->
 <!--        </td>-->
+        <td >
+            <form th:method="GET" th:action="@{/admin/{id}(id=${user.getId()})}">
+                <input class="check" type="submit" value="Edit"/>
+            </form>
+        </td>
+
         <td id="last">
-            <form th:method="DELETE" th:action="@{/admin/users/{id}(id=${user.getId()})}">
+            <form th:method="DELETE" th:action="@{/admin/{id}(id=${user.getId()})}">
                 <input class="remove" type="submit" value="Remove"/>
             </form>
         </td>
@@ -77,7 +83,7 @@
     </tr>
     <tr>
         <td>
-            <form method="Get" th:action="@{/admin/users/new}">
+            <form method="Get" th:action="@{/admin/new}">
                 <input class="create" type="submit" value="Create New User"/>
             </form>
         </td>
