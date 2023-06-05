@@ -22,12 +22,17 @@ public class BDinit {
         Role admin = new Role("ROLE_ADMIN");
         Role user  = new Role("ROLE_USER");
 
-        User defaultUser = new User("Admin", "Admin", (byte) 18, null, null, "admin@admin.ru");
+        User defaultUser = new User("Admin", "Admin", (byte) 18, null, null, "admin@mail.ru");
+        User defaultUser2 = new User("User", "User", (byte) 21, null, null, "user@mail.ru");
         Set<Role> defaultUserRoles = new HashSet<>();
         defaultUserRoles.add(admin);
         defaultUser.setUserRoles(defaultUserRoles);
         defaultUser.setPassword("admin");
+        defaultUser2.setPassword("user");
+        defaultUser2.setUserRoles(defaultUserRoles);
         rolesRepository.save(user);
+        rolesRepository.save(admin);
         userService.saveNewUserProfile(defaultUser);
+        userService.saveNewUserProfile(defaultUser2);
     }
 }
