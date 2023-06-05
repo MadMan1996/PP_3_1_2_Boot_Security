@@ -19,22 +19,6 @@ public class UsersController {
         this.userService = userService;
     }
 
-    @PatchMapping("users/{id}")
-    public String updateUserProfile(@Valid User user, BindingResult bindingResult){
-        if(userService.isUserExistsWithEmail(user.getEmail()) && !userService.getById(user.getId()).getEmail().equals(user.getEmail())){
-            bindingResult.rejectValue("email", "error.user", "An account already exists for this email.");
-        }
-        if(bindingResult.hasErrors()){
-            return "user/editUserForm";
-        }
-        userService.updateUserProfile(user);
-        return"redirect:/user";
-    }
-    @GetMapping("/user/edit")
-    public String editUserProfile(@AuthenticationPrincipal User user, Model model){
-        model.addAttribute("user", userService.getById(user.getId()));
-        return "user/editUserForm";
-    }
 
     @GetMapping("/user")
     public String showUserProfile(@AuthenticationPrincipal User user, Model model){
