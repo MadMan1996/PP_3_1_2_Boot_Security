@@ -28,7 +28,7 @@ public class User implements UserDetails {
     @NotEmpty(message = "Last name can`not be empty")
     private String lastName;
 
-    @Min(value = 16, message = "Age should not be less than 0")
+    @Min(value = 16, message = "Age should not be less than 16")
     @Max(value = 150, message = "Age should not be greater than 127")
     private Byte age;
     private String avatar;
