@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public void checkUserProfile(User user, BindingResult bindingResult) {
-        if(user.getPassword().length()==0){
+        if(user.getPassword() ==null || user.getPassword().length()==0){
             bindingResult.rejectValue("password", "error.password", "Password shouldn`t be Empty");
         }
         if(user.getUserRoles().size()==0){
@@ -57,21 +57,9 @@ public class UserServiceImpl implements UserService{
 
     @Transactional
     public void updateUserProfile(User user) {
-        Optional<User> curUser = userRepository.findById(user.getId());
-        if(curUser.isPresent()){
-            User updatedUser = curUser.get();
-            updatedUser.setAge(user.getAge());
-            updatedUser.setAvatar(user.getAvatar());
-            updatedUser.setCity(user.getCity());
-            updatedUser.setEmail(user.getEmail());
-            updatedUser.setLastName(user.getLastName());
-            updatedUser.setFirstName(user.getFirstName());
-            userRepository.save(updatedUser);
-        }
-
+            userRepository.save(user);
 
     }
-
 
     @Transactional(readOnly = true)
     public Boolean isUserExistsWithEmail(String email) {
