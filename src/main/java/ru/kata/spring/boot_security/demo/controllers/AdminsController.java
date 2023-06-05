@@ -1,18 +1,17 @@
 package ru.kata.spring.boot_security.demo.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.DAO.RolesRepository;
 import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.services.UserService;
 import javax.validation.Valid;
+
+
 @RequestMapping("admin")
 @Controller
 public class AdminsController {
@@ -20,18 +19,30 @@ public class AdminsController {
     private UserService userService;
     @Autowired
     private RolesRepository rolesRepository;
-    @GetMapping("/users/new")
-    public String newUserForm(Model model) {
-        model.addAttribute("user", new User());
-        model.addAttribute("roles", rolesRepository.findAll());
-        return("user/newUserForm");
-    }
 
     @GetMapping("/users")
-    public String listOfUsers(Model model) {
+    public String listOfUsers(Model model, @AuthenticationPrincipal User user) {
+        model.addAttribute("authUser", userService.getById(user.getId()));
         model.addAttribute("users", userService.getAllUsers());
-        return "user/listOfUsers";
+        model.addAttribute("roles", rolesRepository.findAll());
+        return "user/bootstrapAdminPage";
     }
+
+    @PatchMapping("users/{id}")
+    public String updateUserProfile(@AuthenticationPrincipal User authUser, @Valid User updatedUser, BindingResult bindingResult, Model model){
+
+        if(userService.isUserExistsWithEmail(updatedUser.getEmail()) && !userService.getById(updatedUser.getId()).getEmail().equals(updatedUser.getEmail())){
+            bindingResult.rejectValue("email", "error.user", "An account already exists for this email.");
+        }
+        userService.checkUserProfile(updatedUser, bindingResult);
+
+        if(bindingResult.hasErrors()){
+            throw new UserProfileExcetion(bindingResult.getAllErrors().toString());
+        }
+        userService.updateUserProfile(updatedUser);
+        return "redirect:/admin/users";
+    }
+
 
     @DeleteMapping("/users/{id}")
     public String deleteUserProfile(@PathVariable(name = "id") Long id) {
@@ -40,17 +51,38 @@ public class AdminsController {
     }
 
     @PostMapping("/users")
-    public String createNewUserProfile(@Valid User user, BindingResult bindingResult, Model model){
-        model.addAttribute("roles", rolesRepository.findAll());
-        if(userService.isUserExistsWithEmail(user.getUsername())){
+    public String createNewUserProfile(@Valid User updatedUser, BindingResult bindingResult){;;
+
+        if(userService.isUserExistsWithEmail(updatedUser.getUsername())){
             bindingResult.rejectValue("email", "error.user", "An account already exists for this email.");
         }
-        userService.checkUserProfile(user, bindingResult);
+        userService.checkUserProfile(updatedUser, bindingResult);
         if(bindingResult.hasErrors()){
-            return "user/newUserForm";
+            throw new UserProfileExcetion(bindingResult.getAllErrors().toString());
         }
-        userService.saveNewUserProfile(user);
+        userService.saveNewUserProfile(updatedUser);
         return "redirect:/admin/users";
+    }
+    @ExceptionHandler({UserProfileExcetion.class})
+    @ResponseBody
+    public String handleUserProfileExceptoin(Throwable ex) {
+        return ex.toString();
+    }
+
+
+
+    static class UserProfileExcetion extends IllegalArgumentException {
+        public UserProfileExcetion(String s) {
+            super(s);
+        }
+
+        public UserProfileExcetion(String message, Throwable cause) {
+            super(message, cause);
+        }
+
+        public UserProfileExcetion(Throwable cause) {
+            super(cause);
+        }
     }
 
 }
