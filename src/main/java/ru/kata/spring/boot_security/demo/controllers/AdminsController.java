@@ -25,7 +25,7 @@ public class AdminsController {
         model.addAttribute("authUser", userService.getById(user.getId()));
         model.addAttribute("users", userService.getAllUsers());
         model.addAttribute("roles", rolesRepository.findAll());
-        return "user/bootstrapAdminPage";
+        return "user/RESTView";
     }
 
     @PatchMapping("users/{id}")
@@ -51,7 +51,8 @@ public class AdminsController {
     }
 
     @PostMapping("/users")
-    public String createNewUserProfile(@Valid User updatedUser, BindingResult bindingResult){;;
+    public String createNewUserProfile(@Valid User updatedUser, BindingResult bindingResult){
+        System.out.println(updatedUser);
 
         if(userService.isUserExistsWithEmail(updatedUser.getUsername())){
             bindingResult.rejectValue("email", "error.user", "An account already exists for this email.");
