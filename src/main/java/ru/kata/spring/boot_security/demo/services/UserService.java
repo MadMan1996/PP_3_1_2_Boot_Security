@@ -8,11 +8,11 @@ import ru.kata.spring.boot_security.demo.models.User;
 public interface UserService extends UserDetailsService {
     Iterable<User> getAllUsers();
     void removeUserById(Long id);
-    void saveNewUserProfile(User user);
+    User saveNewUserProfile(User user);
     void checkUserProfile(User user, BindingResult bindingResult);
     User getById(Long id);
 
-    void updateUserProfile(User user);
+    User updateUserProfile(User user);
 
    Boolean isUserExistsWithEmail(String email);
 }

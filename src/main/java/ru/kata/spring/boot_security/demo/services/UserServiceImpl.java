@@ -2,7 +2,6 @@ package ru.kata.spring.boot_security.demo.services;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -11,8 +10,6 @@ import org.springframework.validation.BindingResult;
 import ru.kata.spring.boot_security.demo.DAO.UserRepository;
 import ru.kata.spring.boot_security.demo.models.User;
 
-import javax.swing.text.html.Option;
-import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService{
@@ -35,9 +32,9 @@ public class UserServiceImpl implements UserService{
 
 
     @Transactional
-    public void saveNewUserProfile(User user) {
+    public User saveNewUserProfile(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     @Override
@@ -56,8 +53,8 @@ public class UserServiceImpl implements UserService{
     }
 
     @Transactional
-    public void updateUserProfile(User user) {
-            userRepository.save(user);
+    public User updateUserProfile(User user) {
+            return userRepository.save(user);
 
     }
 
