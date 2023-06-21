@@ -1,14 +1,184 @@
+
 document.addEventListener("DOMContentLoaded", async function () {
-    document.forms.newuserform.addEventListener("submit", (e) => {
-        e.preventDefault();
-        addUser();
-    });
-    fillAllUsersTable();
+    const selectValue = await fillSelectValue();
     const authUser = await getAuthUser();
+    document.getElementById("rolesEdit").innerHTML = selectValue;
+    document.getElementById("roleDel").innerHTML = selectValue;
     fillHeaderText(authUser);
+    await addContentAccordingAuthUserRole(authUser, selectValue);
+
+
 });
+async function fetchRoles(){
+    const response = await fetch(`http://localhost:8080/api/roles/management`);
+    const roles = await response.json();
+    return roles;
+}
+
+async function addContentAccordingAuthUserRole(authUser, selectValue){
+    const navPanelTab = document.getElementById("nav_panel_tab");
+    const tabContent = document.getElementById("v-pills-tabContent");
+    const strUserRoles = getUserRole(authUser.userRoles);
+    if(strUserRoles.includes("ADMIN")){
+        navPanelTab.innerHTML+=`<a class="nav-link active" id="nav_panel_link_admin" data-toggle="pill"
+               href="#v-pills-admin" role="tab"
+               aria-controls="v-pills-settings" aria-selected="true">Admin</a>`;
+
+        tabContent.innerHTML+=` <div  class="tab-pane fade active show" id="v-pills-admin"
+                 role="tabpanel" aria-labelledby="nav_panel_link_admin">
+                <h1>Admin panel</h1>
+                <ul class="nav nav-tabs" id="adminTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="users-table-tab" data-toggle="tab" href="#users-table"
+                           role="tab" aria-controls="users-table" aria-selected="true">Users table</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="new-user-tab" data-toggle="tab" href="#new-user" role="tab"
+                           aria-controls="new-user" aria-selected="false">New User</a>
+                    </li>
+
+                </ul>
+                <div class="tab-content" id="adminTabContent">
+                    <div class="tab-pane fade show active" id="users-table" role="tabpanel"
+                         aria-labelledby="users-table-tab">
+                        <div class="card">
+                            <div class="card-header">
+                                All users
+                            </div>
+                            <div class="card-body">
+                                <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">ID</th>
+                                        <th scope="col">First Name</th>
+                                        <th scope="col">Last Name</th>
+                                        <th scope="col">Age</th>
+                                        <th scope="col">Email</th>
+                                        <th scope="col">Role</th>
+                                        <th scope="col">Edit</th>
+                                        <th scope="col">Delete</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="allUsersTable">
 
 
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+                    <!--            New user tab content -->
+                    <div class="tab-pane fade" id="new-user" role="tabpanel" aria-labelledby="new-user-tab">
+                        <div class="card">
+                            <div class="card-header">
+                                Add new user
+                            </div>
+                            <div class="card-body" id="new_user_card">
+
+                                <form class="flex-column d-flex justify-content-center align-items-center text-center"
+                                      name="newuserform"
+                                      onsubmit="event.preventDefault(); addUser();"
+                                      >
+                                    <div class="form-group col-5">
+                                        <label class="font-weight-bold m-0" for="firstNameNew">First Name</label>
+                                        <input type="text" class="form-control form-control-sm" name="firstName"
+                                               id="firstNameNew">
+                                    </div>
+                                    <div class="form-group col-5">
+                                        <label class="font-weight-bold m-0" for="lastNameNew">Last Name</label>
+                                        <input type="text" class="form-control form-control-sm" name="lastName"
+                                               id="lastNameNew">
+                                    </div>
+                                    <div class="form-group col-5">
+                                        <label class="font-weight-bold m-0" for="ageNew">Age</label>
+                                        <input type="text" class="form-control form-control-sm" name="age" id="ageNew">
+                                    </div>
+                                    <div class="form-group col-5">
+                                        <label class="font-weight-bold m-0" for="emailNew">Email address</label>
+                                        <input type="email" class="form-control form-control-sm" name="email"
+                                               id="emailNew">
+                                    </div>
+                                    <div class="form-group col-5">
+                                        <label class="font-weight-bold m-0" for="passwordNew">Password</label>
+                                        <input type="password" class="form-control form-control-sm" name="password"
+                                               id="passwordNew">
+                                    </div>
+                                    <div class="form-group col-5">
+                                        <label class="font-weight-bold m-0" for="rolesNew">Roles</label>
+                                        <select size="2" id="rolesNew" class="form-control form-control-sm"
+                                                name="userRoles"
+                                                style="display: block"
+                                                multiple="multiple">
+                                          ${selectValue}
+                                        </select>
+                                    </div>
+                                    <button class="btn btn-success m-auto" type="submit"
+                                    >Add new user
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>`
+        fillAllUsersTable();
+    }
+    if(strUserRoles.includes("ADMIN") || strUserRoles.includes("USER")){
+        navPanelTab.innerHTML+=` <a
+                class="nav-link" 
+               id="nav_panel_link_user" data-toggle="pill" href="#v-pills-user" role="tab"
+               aria-controls="v-pills-settings" aria-selected="false">User</a>`;
+        tabContent.innerHTML+=`  <div
+                class="tab-pane fade" 
+                 id="v-pills-user" role="tabpanel" aria-labelledby="nav_panel_link_user">
+                <h1>User information-page</h1>
+                <div class="card">
+                    <div class="card-header font-weight-bold">
+                        About user
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">First Name</th>
+                                <th scope="col">Last Name</th>
+                                <th scope="col">Age</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Role</th>
+                            </tr>
+                            </thead>
+                            <tbody id="authUserTable">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>`;
+        document.getElementById("authUserTable").innerHTML = createUserRow(authUser, false);
+    }
+    if(strUserRoles.includes("USER") && !strUserRoles.includes("ADMIN")){
+        document.getElementById("nav_panel_link_user").classList.add("active");
+        const userTabContent = document.getElementById("v-pills-user");
+        userTabContent.classList.add("show");
+        userTabContent.classList.add("active");
+        userTabContent.classList.remove("fade");
+    }
+
+}
+
+async function fillSelectValue(){
+    let result = "";
+    const roles = await fetchRoles();
+    for(let role of roles){
+        result+=`   <option name="userRoles"
+                            value=${role.id}>
+                              ${role.authority}      
+                            </option>`;
+    }
+    return result;
+}
 function parseSelectValue(select, valueAcceptor) {
     for (let option of select.options) {
         if (option.selected) {
@@ -77,7 +247,7 @@ async function addUser() {
     jsonUserData["userRoles"] = [];
     parseSelectValue(document.getElementById("rolesNew"), jsonUserData["userRoles"]);
 
-    const response = await fetch(`http://localhost:8080/api/users`, {
+    const response = await fetch(`http://localhost:8080/api/users/management`, {
         method: "POST",
         body: JSON.stringify(jsonUserData),
         headers: {
@@ -113,7 +283,7 @@ async function editUser(id) {
     jsonData["userRoles"] = [];
     parseSelectValue(document.getElementById("rolesEdit"), jsonData["userRoles"]);
     console.log(jsonData)
-    const response = await fetch(`http://localhost:8080/api/users/${id}`, {
+    const response = await fetch(`http://localhost:8080/api/users/management/${id}`, {
         method: "PATCH",
         body: JSON.stringify(jsonData),
         headers: {
@@ -134,7 +304,7 @@ async function editUser(id) {
 
 
 async function deleteUser(id) {
-    const response = await fetch(`http://localhost:8080/api/users/${id}`, {
+    const response = await fetch(`http://localhost:8080/api/users/management/${id}`, {
         method: "DELETE",
     });
     if (response.status == 200) {
@@ -145,7 +315,7 @@ async function deleteUser(id) {
 }
 
 async function fetchUserData(id) {
-    const response = await fetch(`http://localhost:8080/api/users/${id}`);
+    const response = await fetch(`http://localhost:8080/api/users/management/${id}`);
     const jsonData = await response.json();
     return jsonData;
 }
@@ -196,7 +366,7 @@ async function handleDeleteClick(id) {
 
 
 async function fillAllUsersTable() {
-    const response = await fetch("http://localhost:8080/api/users");
+    const response = await fetch("http://localhost:8080/api/users/management");
     const jsonData = await response.json();
     const table = document.getElementById("allUsersTable");
     for (const user of jsonData) {
